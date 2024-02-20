@@ -6,30 +6,24 @@ const app = new App({
   signingSecret:process.env.YOUR_SLACK_SIGNING_SECRET,
 });
 
+
+
 app.message(async ({ message, say }) => {
- 
-  const urlRegex = /(http[s]?:\/\/[^\s]+)/;
+  const urlRegex = /(https?:\/\/[^\s]+)/;
   const match = message.text.match(urlRegex);
-
   if (match) {
-    const url = match[0];
-
- 
-    const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com/url/', { url });
-
-
-    console.log(response,"testing.....")
-
-    // const res= await axios.get(`https://slack-url-shortner-by-prashant.onrender.com/url/:${response.data.shortId}`)
-
-   
-    await say(`Shortened URL: https://slack-url-shortner-by-prashant.onrender.com/url/${response.data.id}`);
+    const longUrl = match[0];
+    try {
+      const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com//shorten', { longUrl });
+      await say(`Shortened URL: ${response.data.shortUrl}`);
+    } catch (error) {
+      console.error('Error:', error.response.data.error);
+      await say('Failed to shorten URL. Please try again later.');
+    }
   }
-
 });
 
 (async () => {
   await app.start(3000);
-
-  console.log('⚡️ Bolt app is running!');
-})();  
+  console.log('Bot is running...');
+})(); 
