@@ -7,7 +7,7 @@ const app = new App({
   signingSecret: process.env.YOUR_SLACK_SIGNING_SECRET,
 });
 
-app.message(async ({ message, say }) => {
+app.message(async ({ message, context }) => {
   const urlRegex = /(https?:\/\/[^\s]+)/;
   const match = message.text.match(urlRegex);
   
@@ -16,10 +16,21 @@ app.message(async ({ message, say }) => {
 
     try {
       const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com/shorten', { longUrl });
-      await say(`Shortened URL: ${response.data.shortUrl}`);
+      const shortUrl = response.data.shortUrl;
+
+      // Send the shortened URL as a message to the channel where the original message was posted
+      await app.client.chat.postMessage({
+        token: context.botToken,
+        channel: message.channel,
+        text: `Shortened URL: ${shortUrl}`,
+      });
     } catch (error) {
       console.error('Error:', error.response.data.error);
-      await say('Failed to shorten URL. Please try again later.');
+      await app.client.chat.postMessage({
+        token: context.botToken,
+        channel: message.channel,
+        text: 'Failed to shorten URL. Please try again later.',
+      });
     }
   }
 });
