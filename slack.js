@@ -14,7 +14,7 @@ app.message(async ({ message, say }) => {
   if (match) {
     const longUrl = match[0];
     try {
-      const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com//shorten', { longUrl });
+      const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com/shorten', { longUrl });
       await say(`Shortened URL: ${response.data.shortUrl}`);
     } catch (error) {
       console.error('Error:', error.response.data.error);
