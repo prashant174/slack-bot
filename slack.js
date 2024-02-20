@@ -8,9 +8,10 @@ const app = new App({
 
 app.message(async ({ message, say }) => {
  
-  const urlRegex = /(http[s]?:\/\/[^\s]+)/;
-  const match = message.text.match(urlRegex);
+  // const urlRegex = /(http[s]?:\/\/[^\s]+)/;
+  // const match = message.text.match(urlRegex);
 
+<<<<<<< HEAD
   if (match) {
     const url = match[0];
 
@@ -25,6 +26,17 @@ app.message(async ({ message, say }) => {
    
     await say(`Shortened URL: https://slack-url-shortner-by-prashant.onrender.com/url/${response.data.id}`);
   }
+=======
+  // if (match) {
+  //   const longUrl = match[0];
+
+ 
+    const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com/url/', { message });
+
+   
+    await say(`Shortened URL: https://slack-url-shortner-by-prashant.onrender.com/url/${response.data.shortUrl}`);
+  // }
+>>>>>>> 0d1fc6e80ba8fcbef62d11d8f17b65400faf018e
 });
 
 (async () => {
