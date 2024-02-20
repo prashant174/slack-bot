@@ -36,6 +36,6 @@ app.message(async ({ message, context }) => {
 });
 
 (async () => {
-  await app.start(process.env.PORT || 3000);
+  await app.start(8000);
   console.log('Bot is running...');
 })();
