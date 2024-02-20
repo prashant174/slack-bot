@@ -12,13 +12,18 @@ app.message(async ({ message, say }) => {
   const match = message.text.match(urlRegex);
 
   if (match) {
-    const longUrl = match[0];
+    const url = match[0];
 
  
-    const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com/url/', { longUrl });
+    const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com/url/', { url });
+
+
+    console.log(response,"testing.....")
+
+    // const res= await axios.get(`https://slack-url-shortner-by-prashant.onrender.com/url/:${response.data.shortId}`)
 
    
-    await say(`Shortened URL: https://slack-url-shortner-by-prashant.onrender.com/url/${response.data.shortUrl}`);
+    await say(`Shortened URL: https://slack-url-shortner-by-prashant.onrender.com/url/${response.data.id}`);
   }
 });
 
