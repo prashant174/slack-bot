@@ -2,8 +2,8 @@ const { App } = require('@slack/bolt');
 const axios = require('axios');
 require('dotenv').config();
 const app = new App({
-  token:process.env['YOUR_SLACK_BOT_TOKEN'],
-  signingSecret:process.env['YOUR_SLACK_SIGNING_SECRET'],
+  token:process.env.YOUR_SLACK_BOT_TOKEN,
+  signingSecret:process.env.YOUR_SLACK_SIGNING_SECRET,
 });
 
 app.message(async ({ message, say }) => {
@@ -23,7 +23,7 @@ app.message(async ({ message, say }) => {
 });
 
 (async () => {
-  await app.start(process.env.PORT || 3000);
+  await app.start(3000);
 
   console.log('⚡️ Bolt app is running!');
 })();  
