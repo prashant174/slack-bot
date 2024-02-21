@@ -1,41 +1,46 @@
-const { App } = require('@slack/bolt');
-const axios = require('axios');
-require('dotenv').config();
+const {App}=require('@slack/bolt');
+const axios=require('axios')
+require('dotenv').config()
 
-const app = new App({
-  token: process.env.YOUR_SLACK_BOT_TOKEN,
-  signingSecret: process.env.YOUR_SLACK_SIGNING_SECRET,
+
+const app=new App({
+    token:process.env.SLACK_BOT_TOKEN,
+    signingSecret:process.env.SLACK_SIGNING_SECRET,
+    appToken:process.env.SLACK_APP_TOKEN,
+    socketMode:true,
+
 });
 
-app.message(async ({ message, context }) => {
-  const urlRegex = /(https?:\/\/[^\s]+)/;
-  const match = message.text.match(urlRegex);
-  
-  if (match) {
-    const longUrl = match[0];
+
+
+app.command('/url', async ({ command, ack, say }) => {
+    await ack();
+
+    
+    const urlFormat = /(https?:\/\/[^\s]+)/g;
+    const urls = command.text.match(urlFormat);
+    if (!urls ) {
+        await say('No URL provided please enter long url');
+        return;
+    }
+    const url = urls[0];
 
     try {
-      const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com/shorten', { longUrl });
-      const shortUrl = response.data.shortUrl;
+        
+        const response = await axios.post('https://slack-url-shortner-by-prashant.onrender.com/url/', { url: url });
 
-      // Send the shortened URL as a message to the channel where the original message was posted
-      await app.client.chat.postMessage({
-        token: context.botToken,
-        channel: message.channel,
-        text: `Shortened URL: ${shortUrl}`,
-      });
+        
+        // console.log(response.data.id)
+        const shortId=response.data.id
+
+        await say(`Hurray your short url created successfully : https://slack-url-shortner-by-prashant.onrender.com/url/${shortId}`);
     } catch (error) {
-      console.error('Error:', error.response.data.error);
-      await app.client.chat.postMessage({
-        token: context.botToken,
-        channel: message.channel,
-        text: 'Failed to shorten URL. Please try again later.',
-      });
+        console.error( error);
+        await say('something went wrong please try again later');
     }
-  }
 });
 
 (async () => {
-  await app.start(8000);
-  console.log('Bot is running...');
-})();
+    await app.start(process.env.PORT || 3000);
+    console.log(`app is running! on port ${process.env.PORT || 3000} `);
+  })();
